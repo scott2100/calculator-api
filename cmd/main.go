@@ -1,7 +1,7 @@
 package main
 
 import (
-	"calculator-api/internal/handler"
+	"calculator-api/internal/handlers"
 	"calculator-api/internal/middleware"
 	"github.com/rs/cors"
 	"log/slog"
@@ -14,12 +14,12 @@ var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 func main() {
 
 	router := http.NewServeMux()
-	router.HandleFunc("/", handler.HandleRoot)
-	router.HandleFunc("POST /add", handler.HandleAdd)
-	router.HandleFunc("POST /subtract", handler.HandleSubtract)
-	router.HandleFunc("POST /multiply", handler.HandleMultiply)
-	router.HandleFunc("POST /divide", handler.HandleDivide)
-	router.HandleFunc("POST /sum", handler.HandleSum)
+	router.HandleFunc("/", handlers.HandleRoot)
+	router.HandleFunc("POST /add", handlers.HandleAdd)
+	router.HandleFunc("POST /subtract", handlers.HandleSubtract)
+	router.HandleFunc("POST /multiply", handlers.HandleMultiply)
+	router.HandleFunc("POST /divide", handlers.HandleDivide)
+	router.HandleFunc("POST /sum", handlers.HandleSum)
 
 	server := http.Server{
 		Addr:    ":8983",
