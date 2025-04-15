@@ -6,7 +6,6 @@ import (
 	"log/slog"
 	"net/http"
 	"os"
-	"strconv"
 )
 
 var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
@@ -61,14 +60,14 @@ func handleOperation(writer http.ResponseWriter, request *http.Request, operatio
 
 	err := decodeRequest(request, &numbers)
 	if err != nil {
-		logger.Error("Error decoding request body",
-			slog.String("statusCode", strconv.Itoa(http.StatusBadRequest)),
-			slog.String("error", err.Error()))
+		http.Error(writer, "Error decoding request body"+err.Error(), http.StatusBadRequest)
+		return
 	}
 
 	err, result := operation(numbers)
 	if err != nil {
-		http.Error(writer, "Error: "+err.Error(), http.StatusInternalServerError)
+		http.Error(writer, "Error performing calculation: "+err.Error(), http.StatusInternalServerError)
+		return
 	}
 	response := calcResult{Result: result}
 
