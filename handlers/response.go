@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func encodeResponse(writer http.ResponseWriter, result resultResponse) error {
+func encodeResponse(writer http.ResponseWriter, result calcResult) error {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 

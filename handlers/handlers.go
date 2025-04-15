@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"encoding/json"
 	"errors"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
@@ -49,15 +49,11 @@ func HandleAdd(writer http.ResponseWriter, request *http.Request) {
 	})
 }
 
-func HandleRoot(writer http.ResponseWriter, response *http.Request) {
+func HandleRoot(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 
-	err := json.NewEncoder(writer).Encode(response)
-	if err != nil {
-		http.Error(writer, "Error encoding JSON", http.StatusInternalServerError)
-		return
-	}
+	fmt.Fprint(writer, "Welcome to my Calculator API!")
 }
 
 func handleOperation(writer http.ResponseWriter, request *http.Request, operation operationFunc) {
