@@ -19,7 +19,7 @@ func main() {
 	router.HandleFunc("POST /subtract", handlers.HandleSubtract)
 	router.HandleFunc("POST /multiply", handlers.HandleMultiply)
 	router.HandleFunc("POST /divide", handlers.HandleDivide)
-	router.HandleFunc("POST /sum", handlers.HandleSum)
+	//router.HandleFunc("POST /sum", handlers.HandleSum)
 
 	server := http.Server{
 		Addr:    ":8983",
