@@ -1,14 +1,11 @@
 package handlers
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
-	"log/slog"
 	"net/http"
-	"os"
 )
-
-var logger = slog.New(slog.NewTextHandler(os.Stdout, nil))
 
 type operationFunc func(numbers numbers) (error, int)
 
@@ -52,29 +49,36 @@ func HandleRoot(writer http.ResponseWriter, request *http.Request) {
 	writer.Header().Set("Content-Type", "application/json")
 	writer.WriteHeader(http.StatusOK)
 
-	fmt.Fprint(writer, "Welcome to my Calculator API!")
+	_, err := fmt.Fprint(writer, "Welcome to my Calculator API!")
+	if err != nil {
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 func handleOperation(writer http.ResponseWriter, request *http.Request, operation operationFunc) {
+
 	var numbers numbers
 
-	err := decodeRequest(request, &numbers)
+	err := json.NewDecoder(request.Body).Decode(&numbers)
 	if err != nil {
-		http.Error(writer, "Error decoding request body"+err.Error(), http.StatusBadRequest)
+		http.Error(writer, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err, result := operation(numbers)
 	if err != nil {
-		http.Error(writer, "Error performing calculation: "+err.Error(), http.StatusInternalServerError)
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
 	response := calcResult{Result: result}
 
-	err = encodeResponse(writer, response)
+	writer.Header().Set("Content-Type", "application/json")
+	writer.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(writer).Encode(response)
 	if err != nil {
-		http.Error(writer, "Error encoding JSON"+err.Error(), http.StatusInternalServerError)
-		return
+		http.Error(writer, err.Error(), http.StatusInternalServerError)
 	}
 }
 
